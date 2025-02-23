@@ -82,7 +82,6 @@ pipeline {
         always {
             sh '''
                 docker logout
-                docker compose down || true
             '''
             cleanWs()
         }
