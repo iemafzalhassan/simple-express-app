@@ -37,7 +37,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                    sh "docker compose build"
                 }
             }
         }
@@ -53,15 +53,41 @@ pipeline {
                 sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
             }
         }
+
+        stage('Deploy with Docker Compose') {
+            steps {
+                script {
+                    sh '''
+                        docker compose down || true
+                        docker compose up -d
+                        docker compose ps
+                    '''
+                }
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                script {
+                    sh '''
+                        sleep 10
+                        curl -f http://localhost:3000/api/welcome || exit 1
+                    '''
+                }
+            }
+        }
     }
 
     post {
         always {
-            sh 'docker logout'
+            sh '''
+                docker logout
+                docker compose down || true
+            '''
             cleanWs()
         }
         success {
-            echo 'Pipeline succeeded! Image pushed to DockerHub'
+            echo 'Pipeline succeeded! Application deployed with Docker Compose'
         }
         failure {
             echo 'Pipeline failed!'
