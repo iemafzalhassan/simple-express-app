@@ -84,7 +84,7 @@ PORT=3000
 NODE_ENV=development
 ```
 
-## 🔄 CI/CD Pipeline
+##  CI/CD Pipeline
 The project uses Jenkins for CI/CD with the following stages:
 
 1. Code Checkout
