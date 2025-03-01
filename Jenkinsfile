@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent {"dev"};
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub')
